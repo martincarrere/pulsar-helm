@@ -51,6 +51,7 @@ securityContext: {}
 
 # This is for setting up a service more information can be found here: https://kubernetes.io/docs/concepts/services-networking/service/
 service:
+  enabled: true
   # This sets the service type more information can be found here: https://kubernetes.io/docs/concepts/services-networking/service/#publishing-services-service-types
   type: ClusterIP
   # This sets the ports more information can be found here: https://kubernetes.io/docs/concepts/services-networking/service/#field-spec-ports
@@ -97,7 +98,7 @@ readinessProbe:
 autoscaling:
   enabled: false
   minReplicas: 1
-  maxReplicas: 100
+  maxReplicas: 10
   targetCPUUtilizationPercentage: 80
   # targetMemoryUtilizationPercentage: 80
 
@@ -155,6 +156,10 @@ api_key: change_me_asap
 #- When this flag is set to true, all configs will be set in secrets,
 #- when it is set to false, all configs will be set in configmaps
 useSecretConfigs: false
+
+#- Block to enable or not DinD dependencies
+dind:
+  enabled: true
 
 #- All config files will be mapped into the `/pulsar/` directory
 configs:

@@ -40,14 +40,18 @@ spec:
           env:
           - name: PULSAR_CONFIG_PRIVATE_TOKEN
             value: {{ .Values.api_key }}
+          {{- if .Values.service.enabled }}
           ports:
             - name: http
               containerPort: {{ .Values.service.port }}
               protocol: TCP
+          {{- end }}
+          {{- if .Values.service.enabled }}
           livenessProbe:
             {{- toYaml .Values.livenessProbe | nindent 12 }}
           readinessProbe:
             {{- toYaml .Values.readinessProbe | nindent 12 }}
+          {{- end }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           volumeMounts:
@@ -72,10 +76,14 @@ spec:
           {{- with .Values.volumeMounts }}
             {{- toYaml . | nindent 12 }}
           {{- end }}
+            {{- if .Values.dind.enabled }}
             - name: dind-storage
               mountPath: /var/lib/docker
             - name: dind-sock
               mountPath: /var/run
+            {{- end }}
+
+        {{- if .Values.dind.enabled }}
         - name: dind
           image: docker:dind
           env:
@@ -93,6 +101,7 @@ spec:
               mountPath: /var/lib/docker
             - name: dind-sock
               mountPath: /var/run
+        {{- end }}
       volumes:
         - name: pulsar-conf-files
           {{- if .Values.useSecretConfigs }}
@@ -109,10 +118,12 @@ spec:
           {{- else }}
           emptyDir: {}
           {{- end }}
+        {{- if .Values.dind.enabled }}
         - name: dind-storage
           emptyDir: {}
         - name: dind-sock
           emptyDir: {}
+        {{- end }}
         {{- if $.Values.refdata.enabled }}
         - name: pulsar-refdata
           persistentVolumeClaim:
